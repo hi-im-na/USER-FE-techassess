@@ -15,14 +15,15 @@ const AssessService = {
             console.error("Error fetching myAssess:", error);
         }
     },
-    submitForm: async (userId, toUserId, totalPoint, data) => {
+    submitForm: async (userId, toUserId, totalPoint, data, isSubmitted) => {
         try {
             const accessToken = localStorage.getItem("accessToken");
             const response = await axios.post(`${InfoUrl}/api/assess/save-assess`, {
                 userId: userId,
                 toUserId: toUserId,
                 totalPoint: totalPoint,
-                assessDetails: data.assessDetails
+                assessDetails: data.assessDetails,
+                submitted: isSubmitted,
             }, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
@@ -33,7 +34,8 @@ const AssessService = {
             console.error("Lỗi khi gửi yêu cầu:", error);
         }
     },
-    fetchListData: async(departmentId) => {
+
+    fetchListData: async (departmentId) => {
         try {
             const accessToken = localStorage.getItem("accessToken");
             const response = await axios.get(`${InfoUrl}/api/departments/${departmentId}`, {

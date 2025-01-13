@@ -20,7 +20,7 @@
           <div class="line"><strong>Bộ phận:</strong> {{ departmentName }}</div>
         </div>
       </div>
-      <h4 v-if="isAssess" class="text-success">Bạn đã đánh giá cho bản thân</h4>
+      <h4 v-if="isAssess && isSubmitted" class="text-success">Bạn đã đánh giá cho bản thân</h4>
     </div>
 
     <!-- Right Menu -->
@@ -44,7 +44,7 @@
 
       <!-- Evaluation Form -->
       <!-- @submit.prevent="submit" -->
-      <form class="evaluation-form" @submit.prevent="submitForm">
+      <form class="evaluation-form">
         <!-- Performance Evaluation -->
         <div v-for="(criteria, criteriaIndex) in listCriteria" :key="criteria.id" class="section mb-4">
           <div class="d-flex justify-content-between">
@@ -72,7 +72,21 @@
 
               <div v-if="question.answers" class="options d-flex justify-content-around my-3">
                 <div v-for="(answer, answerIndex) in question.answers" :key="answer.id" class="form-check">
-                  <input v-if="!isAssess" type="radio" :id="'performanceOption' +
+                  <input v-if="isAssess" type="radio" :id="'performanceOption' +
+                    criteriaIndex +
+                    questionIndex +
+                    answerIndex
+                    " :name="'performance' + criteriaIndex + questionIndex" class="form-check-input" @change="
+                      selectPerformanceValue(
+                        criteria.id,
+                        criteriaIndex,
+                        question.id,
+                        questionIndex,
+                        answer.value
+                      )
+                      " :value="answer.value" :checked="checkValue(question.id, answer.value)"
+                    :disabled="!checkValue(question.id, answer.value) && isSubmitted" />
+                  <input v-else type="radio" :id="'performanceOption' +
                     criteriaIndex +
                     questionIndex +
                     answerIndex
@@ -85,14 +99,6 @@
                         answer.value
                       )
                       " :value="answer.value" />
-
-                  <input v-else type="radio" :id="'performanceOption' +
-                    criteriaIndex +
-                    questionIndex +
-                    answerIndex
-                    " :name="'performance' + criteriaIndex + questionIndex" class="form-check-input"
-                    :checked="checkValue(question.id, answer.value)"
-                    :disabled="!checkValue(question.id, answer.value)" />
                   <label :for="'performanceOption' +
                     criteriaIndex +
                     questionIndex +
@@ -116,22 +122,16 @@
               </div> -->
               <div v-if="isAssess" class="description">
                 <textarea v-if="
-                  personalAssessDetails?.find(
-                    (detail) =>
-                      detail.criteria.id === criteria.id &&
-                      detail.question.id === question.id &&
-                      detail.description !== null
-                  )
+                  isShowDescription(criteria.id, question.id)
                 " class="form-control" :class="{
                   'error-textarea': perfValues.assessDetails?.find(
                     (detail) => detail.criteriaId === criteria.id
                   )?.hasError,
-                }" rows="2" :value="personalAssessDetails?.find(
-                  (detail) =>
-                    detail.criteria.id === criteria.id &&
-                    detail.question.id === question.id
-                )?.description || ''
-                  " readonly>
+                }" rows="2" :readonly="isSubmitted" v-model="perfValues.assessDetails.find(
+                    (detail) =>
+                      detail.criteriaId === criteria.id &&
+                      detail.questionId === question.id
+                  ).description">
                 </textarea>
               </div>
 
@@ -169,15 +169,19 @@
               }" rows="2" :value="personalAssessDetails?.find(
                 (detail) => detail.criteria.id === criteria.id
               )?.description || ''
-                " readonly></textarea>
+                " :readonly="isSubmitted"></textarea>
             </div>
           </div>
         </div>
 
         <!-- Submit Button -->
         <div class="d-flex justify-content-end">
-          <button class="btn btn-primary" type="submit" :disabled="isAssess">
+          <button class="btn btn-primary mr-1" :disabled="isAssess && isSubmitted"
+            @click.prevent="submitFormWithConfirm">
             Gửi Đánh Giá
+          </button>
+          <button class="btn btn-secondary mr-1" :disabled="isAssess && isSubmitted" @click.prevent="submitForm">
+            Lưu tạm đánh giá
           </button>
         </div>
       </form>
@@ -207,6 +211,8 @@ export default {
       totalPoint: 0,
       departmentName: "",
       profileImage: profileImage,
+      isSubmitted: false,
+      listAssessDetails: [],
     };
   },
   async created() {
@@ -285,12 +291,23 @@ export default {
     async loadMyAssess() {
       const res = await AssessService.fetchMyAssess(this.userInfo.id);
       if (res && res.code === 1010) {
+        console.log("PERSONAL ASSESS:: ", res.data);
         this.isAssess = true;
+        this.isSubmitted = res.data.submitted;
         this.personalAssessDetails = res.data.assessDetails;
+        this.perfValues.assessDetails = res.data.assessDetails.map((detail) => {
+          return {
+            criteriaId: detail.criteria?.id,
+            questionId: detail.question?.id,
+            value: detail?.value,
+            description: detail?.description,
+          };
+        });
         console.log("PERSONAL ASSESS DETAILS:: ", this.personalAssessDetails);
       }
       if (res && res.code === 404) {
         this.isAssess = false;
+        this.isSubmitted = false;
         console.error("Bạn chưa đánh giá cho bản thân");
       }
     },
@@ -381,8 +398,9 @@ export default {
         console.error("Error fetching criteria list:", error);
       }
     },
+
     async submitForm() {
-      if (!localStorage.getItem("assessDetails")) {
+      if (!this.perfValues.assessDetails) {
         toast.error("Vui lòng điền đánh giá của bạn!", { autoClose: 3000 });
         return;
       }
@@ -391,40 +409,43 @@ export default {
       let firstErrorRef = null;
 
       this.perfValues.assessDetails.forEach((detail) => {
-        const isCriteriaToCheck = detail.questionId !== null;
-        // Kiểm tra xem giá trị đã được chọn hay chưa
-        if (isCriteriaToCheck && (!detail.value || detail.value === 0)) {
-          allValuesSelected = false;
-        }
-
-        // Nếu giá trị >= 4, kiểm tra mô tả
-        if (detail.value >= 4 && isCriteriaToCheck) {
-          const isDescriptionFilled =
-            detail.description && detail.description.trim() !== "";
-
-          if (!isDescriptionFilled) {
-            allDescriptionsFilled = false; // Đánh dấu mô tả chưa điền
-            detail.hasError = true; // Đánh dấu có lỗi
-
-            // Lưu ref của ô nhập có lỗi đầu tiên
-            if (!firstErrorRef) {
-              const refKey = `description_${detail.criteriaId}_${detail.questionId}`; // Sửa đổi refKey nếu cần
-              firstErrorRef = this.$refs[refKey]?.[0]; // Thêm kiểm tra an toàn với optional chaining
+        console.log("allDescriptionsFilled %s, allValuesSelected %s, firstErrorRef %s", allDescriptionsFilled, allValuesSelected, firstErrorRef);
+        console.log("detail: ", detail);
+        // check những criteria có câu hỏi. nếu có thì phải chọn giá trị
+        const isCriteriaHasQuestion = (detail.questionId !== null && detail.questionId !== undefined);
+        if (isCriteriaHasQuestion) {
+          // Kiểm tra xem giá trị đã được chọn hay chưa
+          if (!detail.value || detail.value === 0) {
+            allValuesSelected = false;
+            detail.hasError = true;
+          }
+          // Nếu giá trị >= 4, kiểm tra mô tả
+          if (detail.value >= 4) {
+            const isDescriptionFilled = detail.description && detail.description.trim() !== "";
+            if (!isDescriptionFilled) {
+              allDescriptionsFilled = false;
+              detail.hasError = true;
+              if (!firstErrorRef) {
+                const refKey = `description_${detail.criteriaId}_${detail.questionId}`;
+                firstErrorRef = this.$refs[refKey]?.[0];
+              }
+            } else {
+              detail.hasError = false;
             }
           } else {
-            detail.hasError = false; // Nếu đã điền mô tả, không có lỗi
+            detail.hasError = false;
           }
-        } else {
-          detail.hasError = false; // Nếu giá trị < 3, không cần mô tả, không có lỗi
-        }
-        if (
-          !isCriteriaToCheck &&
-          (!detail.description || detail.description.trim() === "")
-        ) {
-          allDescriptionsFilled = false;
-          detail.hasError = true;
-        } else {
-          detail.hasError = false;
+        } else { // nếu không có câu hỏi thì check mô tả có bị rỗng không, nếu rỗng thì báo lỗi
+          if (!detail.description || detail.description.trim() === "") {
+            allDescriptionsFilled = false;
+            detail.hasError = true;
+            if (!firstErrorRef) {
+              const refKey = `description_${detail.criteriaId}_${detail.questionId}`;
+              firstErrorRef = this.$refs[refKey]?.[0];
+            }
+          } else {
+            detail.hasError = false;
+          }
         }
       });
 
@@ -460,7 +481,8 @@ export default {
           this.userInfo.id,
           this.userInfo.id,
           this.totalPoint,
-          this.perfValues
+          this.perfValues,
+          this.isSubmitted,
         );
         toast.success("Đánh giá thành công!", {
           autoClose: 2000,
@@ -472,6 +494,12 @@ export default {
         console.error("Error submitting form:", error);
       }
     },
+
+    submitFormWithConfirm() {
+      this.isSubmitted = true;
+      this.submitForm();
+    },
+
     calculateWorkTime() {
       const userInfo = localStorage.getItem("userInfo");
       if (userInfo && userInfo.dateJoinCompany) {
@@ -513,6 +541,7 @@ export default {
       return "Chưa xác định";
     },
     isShowDescription(criteriaId, questionId) {
+      // console.log("criteriaId: %s, questionId: %s", criteriaId, questionId);
       // Kiểm tra xem assessDetails có tồn tại và lấy câu hỏi tương ứng
       const question = this.perfValues.assessDetails?.find(
         (detail) =>
@@ -520,6 +549,8 @@ export default {
       );
 
       // Kiểm tra điều kiện để hiển thị mô tả
+      // console.log("question: ", question);
+      // console.log("isShowDescription: ", question && question.value >= 4);
       return question && question.value >= 4;
     },
     selectPerformanceValue(
@@ -529,6 +560,7 @@ export default {
       questionIndex,
       value
     ) {
+      console.log("criteriaId: %s, criteriaIndex: %s, questionId: %s, questionIndex: %s, value: %s", criteriaId, criteriaIndex, questionId, questionIndex, value);
       // Giả sử bạn đã khởi tạo perfValues.assessDetails trước đó
       if (!this.perfValues.assessDetails) {
         this.initPerfValues();
@@ -544,7 +576,7 @@ export default {
         assessDetail.value = value;
 
         // Xóa ô nhập "description" nếu giá trị < 3
-        if (value < 3) {
+        if (value < 4) {
           assessDetail.description = null; // Hoặc "" tùy thuộc vào yêu cầu
         }
       }
