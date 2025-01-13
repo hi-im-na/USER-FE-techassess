@@ -952,6 +952,176 @@ export default {
   -webkit-overflow-scrolling: touch;
 }
 
+
+.table > table {
+  width: 100%;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+}
+
+/* Right Menu Styles */
+.right-menu {
+  height: 80vh;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  height: 80vh;
+  margin-right: 20px;
+  margin-top: 25px;
+  margin-left: 20px;
+}
+
+.evaluation-form {
+  flex: 1;
+  /* Take up remaining space */
+  padding: 20px;
+  border-radius: 8px;
+  overflow-y: auto;
+  /* Allow scrolling if content overflows */
+}
+
+.evaluation-header {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.evaluation-form .title {
+  background-color: #99c6f8;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.point {
+  color: red;
+}
+
+.evaluation-form .content {
+  padding-left: 20px;
+}
+
+.content > p {
+  color: black;
+}
+
+.evaluation-form .form-check-label {
+  font-weight: normal;
+}
+
+.evaluation-form::-webkit-scrollbar {
+  width: 8px;
+}
+
+.evaluation-form::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 10px;
+}
+
+.evaluation-form::-webkit-scrollbar-thumb:hover {
+  background-color: #888;
+}
+
+/* Form Buttons */
+.form-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  z-index: 10;
+  position: absolute;
+}
+
+/* Thêm  */
+.highlight-blue {
+  border: 2px solid blue;
+  border-radius: 50%;
+}
+
+.highlight-yellow {
+  border: 2px solid rgb(43, 255, 0);
+  border-radius: 50%;
+}
+
+.section h5 {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.left-menu {
+  background-color: #f7f7f7;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-left: 20px;
+  height: 80vh;
+  margin-top: 25px;
+}
+
+.profile {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #007bff;
+  /* Add a border around the avatar */
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.info h4 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.line {
+  font-size: 16px;
+  margin-bottom: 5px;
+  line-height: 1.5;
+}
+
+.line strong {
+  color: #007bff;
+  /* Highlight the labels with a color */
+}
+
+/* Team Mate Table */
+.team-mate .table {
+  font-size: 14px;
+  margin-top: 20px;
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  /* Cho phép cuộn ngang */
+  -webkit-overflow-scrolling: touch;
+}
+
 .table>table {
   width: 100%;
   margin-bottom: 1rem;

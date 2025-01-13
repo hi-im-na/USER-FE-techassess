@@ -34,8 +34,7 @@ const AssessService = {
             console.error("Lỗi khi gửi yêu cầu:", error);
         }
     },
-
-    fetchListData: async (departmentId) => {
+    fetchListData: async(departmentId) => {
         try {
             const accessToken = localStorage.getItem("accessToken");
             const response = await axios.get(`${InfoUrl}/api/departments/${departmentId}`, {
