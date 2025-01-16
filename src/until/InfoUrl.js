@@ -1,1 +1,1 @@
-export const InfoUrl = 'http://localhost:8080';
+export const InfoUrl = 'http://192.168.0.152:8080';
