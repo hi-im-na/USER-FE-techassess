@@ -32,9 +32,10 @@
               </li>
               <li v-if="userInfo">
                 <div class="user-info d-flex align-items-center">
-                  <img :src="userInfo.fileInfo ? userInfo.fileInfo.fileUrl : profileImage" alt="Avatar" class="avatar" />
+                  <img :src="userInfo.fileInfo ? userInfo.fileInfo.fileUrl : profileImage" alt="Avatar"
+                    class="avatar" />
                   <span class="ml-2 text-center" data-bs-toggle="dropdown">
-                    {{ userInfo.rank.position.name}}
+                    {{ userInfo.rank.position.name }}
                     <br>
                     {{ userInfo.name }}
                     <i class="ms-2 bi bi-caret-down-square-fill dropdown"></i>
@@ -88,7 +89,7 @@ export default {
         { text: "Trang chủ", link: "/" },
         { text: "Đánh giá cá nhân", link: "/personal-assess" },
         { text: "Đánh giá chéo", link: "/teammates-assess" },
-        { text: "Kết quả đánh giá", link: "/assess-result" },
+        // { text: "Kết quả đánh giá", link: "/assess-result" },
       ],
       profileImage:
         "https://png.pngtree.com/png-clipart/20231216/original/pngtree-vector-office-worker-staff-avatar-employee-icon-png-image_13863941.png",
@@ -109,12 +110,22 @@ export default {
       this.checkActivePath(to.path);
       next();
     });
+
   },
   methods: {
     checkUserLoggedIn() {
       const accessToken = localStorage.getItem("accessToken");
       if (accessToken) {
         this.userInfo = JSON.parse(localStorage.getItem("user"));
+        console.log(this.userInfo)
+        let haveTeammates = false;
+        this.userInfo.userProjects.forEach((project) => {
+          if (project.userProjects.length > 1)
+            haveTeammates = true;
+        })
+        if (!haveTeammates) {
+          this.menuItems = this.menuItems.filter((item) => item.link !== "/teammates-assess")
+        }
       }
     },
     handleLogout() {

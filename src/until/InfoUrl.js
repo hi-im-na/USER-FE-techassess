@@ -1,1 +1,1 @@
-export const InfoUrl = 'http://localhost:8080';
+export const InfoUrl = process.env.VUE_APP_URL;
