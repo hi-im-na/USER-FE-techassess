@@ -5,8 +5,8 @@
       <div class="row justify-content-center">
         <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4 content">
           <div class="mb-5">
-            <div class="flex justify-center mb-4">
-              <img src="../../assets/Techzenlogo.png" alt="Logo" width="175" height="150" />
+            <div class="tw-flex tw-justify-center tw-mb-4">
+              <img src="@/assets/Techzenlogo.png" alt="Logo" width="175" height="150" />
             </div>
             <h2 class="text-center mb-4">Đăng nhập Tech Assess 360</h2>
           </div>

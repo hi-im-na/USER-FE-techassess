@@ -1,5 +1,5 @@
 <template>
-  <div
+  <div 
     class="container-fluid row justify-content-md-center align-items-center"
     v-if="userInfo"
   >
