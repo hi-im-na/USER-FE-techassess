@@ -13,7 +13,7 @@
       <div class="row align-items-center">
         <div class="col-6 d-flex align-items-center flex-wrap justify-content-between left-navbar">
           <h1 class="mb-0 site-logo">
-            <img src="../assets/Techzenlogo.png" alt="logo" />
+            <img src="@/assets/Techzenlogo.png" alt="logo" />
           </h1>
           <div class="d-flex align-items-center">
             <span class="ml-3 text-black font-weight-bold">Còn</span>
