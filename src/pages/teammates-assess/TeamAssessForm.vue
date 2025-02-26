@@ -2,15 +2,11 @@
   <!-- Evaluation Header -->
   <div class="evaluation-header text-start mb-2 d-flex justify-content-between">
     <label class="fw-bold fs-4">
-      Đánh giá {{ selectedPerson ? selectedPerson.name : "một người" }} năm
-      2024:
+      Đánh giá {{ selectedPerson ? selectedPerson.name : "một người" }} năm 2024:
     </label>
     <div class="d-flex">
       <label class="fw-bold fs-4"
-        >Tổng điểm:
-        <span class="text-danger">{{
-          totalPoint ? totalPoint : "0"
-        }}</span></label
+        >Tổng điểm: <span class="text-danger">{{ totalPoint ? totalPoint : "0" }}</span></label
       >
     </div>
   </div>
@@ -18,11 +14,7 @@
   <!-- Evaluation Form -->
   <form class="evaluation-form" @submit.prevent="submitForm">
     <!-- Performance Evaluation -->
-    <div
-      v-for="(criteria, criteriaIndex) in listCriteria"
-      :key="criteria.id"
-      class="section mb-4"
-    >
+    <div v-for="(criteria, criteriaIndex) in listCriteria" :key="criteria.id" class="section mb-4">
       <div class="d-flex justify-content-between">
         <label class="d-flex gap-2">
           <h4>{{ criteria.title }}</h4>
@@ -44,20 +36,14 @@
           :key="question.id"
           class="question mb-3"
         >
-          <div
-            class="d-flex justify-content-between title"
-            v-if="question.title"
-          >
+          <div class="d-flex justify-content-between title" v-if="question.title">
             <label>
               {{ questionIndex + 1 }}. {{ question.title }}
               <span class="text-danger"> *</span>
             </label>
           </div>
 
-          <div
-            v-if="question.answers"
-            class="options d-flex justify-content-around my-3"
-          >
+          <div v-if="question.answers" class="options d-flex justify-content-around my-3">
             <div
               v-for="(answer, answerIndex) in question.answers"
               :key="answer.id"
@@ -65,12 +51,7 @@
             >
               <input
                 type="radio"
-                :id="
-                  'performanceOption' +
-                  criteriaIndex +
-                  questionIndex +
-                  answerIndex
-                "
+                :id="'performanceOption' + criteriaIndex + questionIndex + answerIndex"
                 :name="'performance' + criteriaIndex + questionIndex"
                 class="form-check-input"
                 @change="
@@ -79,39 +60,26 @@
                     criteriaIndex,
                     question.id,
                     questionIndex,
-                    answer.value
+                    answer.value,
                   )
                 "
                 :value="answer.value"
               />
               <label
-                :for="
-                  'performanceOption' +
-                  criteriaIndex +
-                  questionIndex +
-                  answerIndex
-                "
+                :for="'performanceOption' + criteriaIndex + questionIndex + answerIndex"
                 class="form-check-label"
                 >{{ answer.title }}
               </label>
               <!-- Thêm  -->
 
               <div
-                v-if="
-                  userInfo.userRoles.some(
-                    (usRole) => usRole.role.name === 'MANAGER'
-                  )
-                "
+                v-if="userInfo.userRoles.some((usRole) => usRole.role.name === 'MANAGER')"
                 class="avatar-group mt-2 d-flex justify-content-center"
               >
                 <div
                   style="position: relative; margin-right: 10px"
                   class="avatar-container"
-                  v-for="(user, userIndex) in isShowAvatar(
-                    criteria.id,
-                    question.id,
-                    answer.value
-                  )"
+                  v-for="(user, userIndex) in isShowAvatar(criteria.id, question.id, answer.value)"
                   :key="userIndex"
                 >
                   <img
@@ -127,9 +95,7 @@
                   <span class="tooltiptext">
                     <div class="d-flex flex-column text-start">
                       <span class="fw-bold text-center">{{ user.name }}</span>
-                      <span>{{
-                        user.description ? user.description : ""
-                      }}</span>
+                      <span>{{ user.description ? user.description : "" }}</span>
                     </div>
                   </span>
                 </div>
@@ -143,8 +109,7 @@
               :class="{
                 'error-textarea': perfValues.assessDetails.find(
                   (detail) =>
-                    detail.criteriaId === criteria.id &&
-                    detail.questionId === question.id
+                    detail.criteriaId === criteria.id && detail.questionId === question.id,
                 )?.hasError,
               }"
               rows="3"
@@ -152,8 +117,7 @@
               v-model="
                 perfValues.assessDetails.find(
                   (detail) =>
-                    detail.criteriaId === criteria.id &&
-                    detail.questionId === question.id
+                    detail.criteriaId === criteria.id && detail.questionId === question.id,
                 ).description
               "
               :ref="'description_' + criteria.id + '_' + question.id"
@@ -163,23 +127,15 @@
       </div>
       <div v-else>
         <div
-          v-if="
-            userInfo.userRoles.some((usRole) => usRole.role.name === 'MANAGER')
-          "
+          v-if="userInfo.userRoles.some((usRole) => usRole.role.name === 'MANAGER')"
           class="spandes text-start"
         >
           <span
-            v-for="(answer, index) in result.criterias.find(
-              (rc) => rc.id == criteria.id
-            )?.answerUser || []"
+            v-for="(answer, index) in result.criterias.find((rc) => rc.id == criteria.id)
+              ?.answerUser || []"
             :key="index"
           >
-          
-            {{
-              answer.fromUserName
-                ? answer.fromUserName + ": " + answer.description
-                : " "
-            }}<br />
+            {{ answer.fromUserName ? answer.fromUserName + ": " + answer.description : " " }}<br />
           </span>
         </div>
         <div>
@@ -188,14 +144,13 @@
               class="form-control"
               :class="{
                 'error-textarea': perfValues.assessDetails?.find(
-                  (detail) => detail.criteriaId === criteria.id
+                  (detail) => detail.criteriaId === criteria.id,
                 )?.hasError,
               }"
               rows="5"
               :value="
-                perfValues.assessDetails?.find(
-                  (detail) => detail.criteriaId === criteria.id
-                )?.description || ''
+                perfValues.assessDetails?.find((detail) => detail.criteriaId === criteria.id)
+                  ?.description || ''
               "
               @input="updateDescription(criteria.id, $event.target.value)"
               placeholder="Nhập nội dung..."
@@ -205,9 +160,7 @@
       </div>
     </div>
     <div class="d-flex justify-content-end">
-      <button :disabled="isLoading" class="btn btn-primary" type="submit">
-        Gửi Đánh Giá
-      </button>
+      <button :disabled="isLoading" class="btn btn-primary" type="submit">Gửi Đánh Giá</button>
     </div>
   </form>
 </template>
@@ -217,7 +170,6 @@ import EVisibleFor from "@/enum/EVisibleFor";
 import AssessService from "@/services/AssessService";
 import UserService from "@/services/UserService";
 import { toast } from "vue3-toastify";
-import "vue3-toastify/dist/index.css";
 export default {
   name: "TeamAssessForm",
   props: {
@@ -288,18 +240,13 @@ export default {
   methods: {
     async updateDepartmentId() {
       if (this.selectedPerson && this.selectedPerson.departmentId) {
-        localStorage.setItem(
-          "userDepartmentId",
-          JSON.stringify(this.selectedPerson.departmentId)
-        );
+        localStorage.setItem("userDepartmentId", JSON.stringify(this.selectedPerson.departmentId));
         await this.loadCriteria(); // Gọi lại API với departmentId mới
       }
     },
     async loadCriteria() {
       try {
-        const departmentId = JSON.parse(
-          localStorage.getItem("userDepartmentId")
-        );
+        const departmentId = JSON.parse(localStorage.getItem("userDepartmentId"));
 
         const res = await AssessService.fetchListData(departmentId);
         if (res.code === 20403) {
@@ -313,8 +260,7 @@ export default {
           this.listCriteria = this.listCriteria
             .filter(
               (c) =>
-                c.visibleFor !== EVisibleFor.SELF.key &&
-                c.visibleFor !== EVisibleFor.MANAGER.key
+                c.visibleFor !== EVisibleFor.SELF.key && c.visibleFor !== EVisibleFor.MANAGER.key,
             )
             .sort((c1, c2) => {
               if (c1.questions == null && !c2.questions == null) {
@@ -342,7 +288,7 @@ export default {
             }
           });
         }
-        
+
         this.initPerfValues();
       } catch (error) {
         console.error("Error fetching criteria list:", error);
@@ -382,7 +328,7 @@ export default {
         this.initPerfValues();
       }
       const assessDetail = this.perfValues.assessDetails.find(
-        (detail) => detail.criteriaId === criteriaId
+        (detail) => detail.criteriaId === criteriaId,
       );
       if (assessDetail) {
         assessDetail.description = value;
@@ -397,27 +343,19 @@ export default {
 
       if (userPosition === "LEADER") {
         try {
-          const numberOfUserInTeam = await UserService.fetchTeamsByUserId(
-            userID
-          );
+          const numberOfUserInTeam = await UserService.fetchTeamsByUserId(userID);
 
-          const recordCheckRes = await AssessService.fetchAssessOfUser(
-            this.selectedPerson.id
-          );
+          const recordCheckRes = await AssessService.fetchAssessOfUser(this.selectedPerson.id);
 
           if (recordCheckRes.code === 1010) {
             const recordCount = recordCheckRes.data.length;
 
             if (recordCount !== numberOfUserInTeam.data.length) {
-              toast.error(
-                "Số lượng đánh giá của nhân viên chưa đủ. Vui lòng kiểm tra lại!"
-              );
+              toast.error("Số lượng đánh giá của nhân viên chưa đủ. Vui lòng kiểm tra lại!");
               return;
             }
           } else {
-            toast.error(
-              "Không thể kiểm tra số lượng bản ghi. Vui lòng thử lại!"
-            );
+            toast.error("Không thể kiểm tra số lượng bản ghi. Vui lòng thử lại!");
             return;
           }
         } catch (error) {
@@ -433,25 +371,19 @@ export default {
         }
 
         if (detail.value >= 4 && isCriteriaToCheck) {
-          const isDescriptionFilled =
-            detail.description && detail.description.trim() !== "";
+          const isDescriptionFilled = detail.description && detail.description.trim() !== "";
           if (!isDescriptionFilled) {
             allDescriptionsFilled = false;
             detail.hasError = true; // Đánh dấu ô mô tả có lỗi
             if (!firstErrorRef) {
               firstErrorRef =
-                this.$refs[
-                  `description_${detail.criteriaId}_${detail.questionId}`
-                ][0]; // Lưu lại phần mô tả đầu tiên có lỗi
+                this.$refs[`description_${detail.criteriaId}_${detail.questionId}`][0]; // Lưu lại phần mô tả đầu tiên có lỗi
             }
           } else {
             detail.hasError = false; // Đặt lại trạng thái lỗi nếu có mô tả
           }
         }
-        if (
-          !isCriteriaToCheck &&
-          (!detail.description || detail.description.trim() === "")
-        ) {
+        if (!isCriteriaToCheck && (!detail.description || detail.description.trim() === "")) {
           allDescriptionsFilled = false;
           detail.hasError = true;
         } else {
@@ -485,7 +417,7 @@ export default {
           this.userInfo.id,
           this.selectedPerson.id,
           this.totalPoint,
-          this.perfValues
+          this.perfValues,
         );
         if (res.code === 201) {
           toast.success("Đánh giá thành công!", {
@@ -514,11 +446,7 @@ export default {
 
         if (days < 0) {
           months--;
-          days += new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth(),
-            0
-          ).getDate();
+          days += new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
         }
 
         if (months < 0) {
@@ -545,20 +473,13 @@ export default {
     isShowDescription(criteriaId, questionId) {
       // Kiểm tra xem assessDetails có tồn tại và lấy câu hỏi tương ứng
       const question = this.perfValues.assessDetails?.find(
-        (detail) =>
-          detail.criteriaId === criteriaId && detail.questionId === questionId
+        (detail) => detail.criteriaId === criteriaId && detail.questionId === questionId,
       );
 
       // Kiểm tra điều kiện để hiển thị mô tả
       return question && question.value >= 4;
     },
-    selectPerformanceValue(
-      criteriaId,
-      criteriaIndex,
-      questionId,
-      questionIndex,
-      value
-    ) {
+    selectPerformanceValue(criteriaId, criteriaIndex, questionId, questionIndex, value) {
       if (!this.perfValues.assessDetails) {
         this.perfValues.assessDetails = [];
 
@@ -581,8 +502,7 @@ export default {
       }
 
       const assessDetail = this.perfValues.assessDetails.find(
-        (detail) =>
-          detail.criteriaId === criteriaId && detail.questionId === questionId
+        (detail) => detail.criteriaId === criteriaId && detail.questionId === questionId,
       );
 
       if (assessDetail) {
@@ -597,25 +517,19 @@ export default {
         this.listScore[criteriaIndex] = {};
       }
 
-      const newScore = this.calculateScoreSelected(
-        criteriaIndex,
-        questionIndex,
-        value
-      );
+      const newScore = this.calculateScoreSelected(criteriaIndex, questionIndex, value);
 
       this.listScore[criteriaIndex][questionIndex] = newScore;
 
-      const questionsCount =
-        this.listCriteria[criteriaIndex]?.questions?.length || 0;
-      const answeredQuestionsCount = Object.keys(
-        this.listScore[criteriaIndex]
-      ).filter((key) => key !== "totalOfCriteria").length;
+      const questionsCount = this.listCriteria[criteriaIndex]?.questions?.length || 0;
+      const answeredQuestionsCount = Object.keys(this.listScore[criteriaIndex]).filter(
+        (key) => key !== "totalOfCriteria",
+      ).length;
 
       if (answeredQuestionsCount === questionsCount) {
         const totalOfCriteria = this.calculateTotalOfCriteria(criteriaIndex);
         const percentage = Math.round(
-          ((totalOfCriteria * 20) / 100) *
-            (this.listCriteria[criteriaIndex]?.point || 1)
+          ((totalOfCriteria * 20) / 100) * (this.listCriteria[criteriaIndex]?.point || 1),
         );
 
         this.listScore[criteriaIndex].totalOfCriteria = percentage;
@@ -626,10 +540,8 @@ export default {
       localStorage.setItem("assessDetails", JSON.stringify(this.perfValues));
     },
     calculateScoreSelected(criteriaIndex, questionIndex, value) {
-      const question =
-        this.listCriteria[criteriaIndex]?.questions[questionIndex];
-      const pointCriteria =
-        parseFloat(this.listCriteria[criteriaIndex]?.point) || 1; // Điểm tiêu chí
+      const question = this.listCriteria[criteriaIndex]?.questions[questionIndex];
+      const pointCriteria = parseFloat(this.listCriteria[criteriaIndex]?.point) || 1; // Điểm tiêu chí
       const questionScore = parseFloat(question?.point) || 0; // Điểm của câu hỏi
       const selectedValue = parseFloat(value) || 0; // Giá trị được chọn
 
@@ -643,10 +555,7 @@ export default {
 
       for (const questionIndex in listScoreForCriteria) {
         if (
-          Object.prototype.hasOwnProperty.call(
-            listScoreForCriteria,
-            questionIndex
-          ) &&
+          Object.prototype.hasOwnProperty.call(listScoreForCriteria, questionIndex) &&
           questionIndex !== "totalOfCriteria"
         ) {
           total += listScoreForCriteria[questionIndex];
@@ -656,13 +565,10 @@ export default {
       return Math.round(total * 100) / 100; // Trả về tổng điểm đã làm tròn
     },
     updateTotalPoint() {
-      this.totalPoint = Object.keys(this.listScore).reduce(
-        (total, criteriaId) => {
-          const criteriaScore = this.listScore[criteriaId].totalOfCriteria || 0; // Đảm bảo giá trị là số
-          return total + criteriaScore; // Cộng dồn tổng điểm
-        },
-        0
-      );
+      this.totalPoint = Object.keys(this.listScore).reduce((total, criteriaId) => {
+        const criteriaScore = this.listScore[criteriaId].totalOfCriteria || 0; // Đảm bảo giá trị là số
+        return total + criteriaScore; // Cộng dồn tổng điểm
+      }, 0);
     },
 
     // Thêm
@@ -695,9 +601,7 @@ export default {
         const response = await AssessService.fetchAssessOfUser(userId);
         this.listAssess = response.data;
 
-        this.selfAssessDetails = response.data.filter(
-          (assess) => assess.assessmentType === "SELF"
-        );
+        this.selfAssessDetails = response.data.filter((assess) => assess.assessmentType === "SELF");
 
         // Convert data -> assessDetail
         if (this.listAssess.length == 0) return;
@@ -711,7 +615,7 @@ export default {
               // Kiểm tra `criteria` có tồn tại trước khi truy cập `id`
               if (assessDetail.criteria && assessDetail.criteria.id != null) {
                 let resultCriteria = this.result.criterias.find(
-                  (criteria) => criteria.id === assessDetail.criteria.id
+                  (criteria) => criteria.id === assessDetail.criteria.id,
                 );
 
                 // Nếu không tồn tại, thêm tiêu chí mới vào
@@ -727,17 +631,11 @@ export default {
 
                 // Tìm xem câu hỏi đã tồn tại trong bất kỳ tiêu chí nào của `criterias` không
                 const questionExists = this.result.criterias.some((criteria) =>
-                  criteria.questions.some(
-                    (question) => question.id === assessDetail.question?.id
-                  )
+                  criteria.questions.some((question) => question.id === assessDetail.question?.id),
                 );
 
                 // Nếu câu hỏi chưa tồn tại và assessDetail.question hợp lệ, thêm vào
-                if (
-                  !questionExists &&
-                  assessDetail.question &&
-                  assessDetail.question.id != null
-                ) {
+                if (!questionExists && assessDetail.question && assessDetail.question.id != null) {
                   const resultQuestion = {
                     id: assessDetail.question.id,
                     title: assessDetail.question.title,
@@ -747,33 +645,26 @@ export default {
                   resultCriteria.questions.push(resultQuestion);
                 }
 
-                if (
-                  assessDetail.question &&
-                  assessDetail.value != null &&
-                  user
-                ) {
+                if (assessDetail.question && assessDetail.value != null && user) {
                   const resultQuestion = resultCriteria.questions.find(
-                    (question) => question.id === assessDetail.question.id
+                    (question) => question.id === assessDetail.question.id,
                   );
 
                   if (resultQuestion) {
                     const answer = assessDetail.question.answers.find(
-                      (ans) => ans.value === assessDetail.value
+                      (ans) => ans.value === assessDetail.value,
                     );
 
                     if (answer) {
-                      const existingAnswerUser =
-                        resultQuestion.answerUsers.find(
-                          (u) => u.id === answer.id
-                        );
+                      const existingAnswerUser = resultQuestion.answerUsers.find(
+                        (u) => u.id === answer.id,
+                      );
 
                       if (existingAnswerUser) {
                         // Nếu user đã tồn tại trong câu trả lời, thêm vào mảng fromUsers
                         existingAnswerUser.fromUsers.push({
                           id: user.id,
-                          avt: user.fileInfo
-                            ? user.fileInfo.fileUrl
-                            : "/images/avatar.png",
+                          avt: user.fileInfo ? user.fileInfo.fileUrl : "/images/avatar.png",
                           name: user.name,
                           description: assessDetail.description,
                         });
@@ -786,9 +677,7 @@ export default {
                           fromUsers: [
                             {
                               id: user.id,
-                              avt: user.fileInfo
-                                ? user.fileInfo.fileUrl
-                                : "/images/avatar.png",
+                              avt: user.fileInfo ? user.fileInfo.fileUrl : "/images/avatar.png",
                               name: user.name,
                               description: assessDetail.description,
                             },
@@ -1149,8 +1038,7 @@ export default {
   border-width: 0;
   color: #333333;
   display: inline-block;
-  font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial,
-    sans-serif;
+  font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
@@ -1208,7 +1096,9 @@ export default {
   /* Viền của dropdown */
   border-radius: 0.25rem;
   /* Bo góc của dropdown */
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
   /* Hiệu ứng chuyển tiếp */
 }
 

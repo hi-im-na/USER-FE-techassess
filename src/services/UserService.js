@@ -1,4 +1,4 @@
-import request from '@/utils/request';
+import request from "@/utils/request";
 
 const UserService = {
   fetchTeamsByUserId: async (userId) => {
@@ -21,7 +21,7 @@ const UserService = {
       // Gọi API PUT để upload avatar, sử dụng formData
       const response = await request.put(`/api/users/updateUserWithAvatar/${user.id}`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data",  // Đảm bảo gửi đúng Content-Type
+          "Content-Type": "multipart/form-data", // Đảm bảo gửi đúng Content-Type
         },
       });
       return response.data;
@@ -37,7 +37,7 @@ const UserService = {
     } catch (error) {
       console.log(error);
     }
-  }
+  },
 };
 
 export default UserService;

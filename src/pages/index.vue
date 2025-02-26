@@ -28,12 +28,17 @@
       </div>
     </div>
   </div>
+  <Button>Send</Button>
 </template>
 
-
 <script>
+import { Button } from "primevue";
+
 export default {
   name: "HomePage",
+  components: {
+    Button: Button,
+  },
   data() {
     return {
       steps: [
@@ -122,7 +127,10 @@ export default {
   height: auto;
   margin-right: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s,
+    background-color 0.3s;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -191,7 +199,9 @@ export default {
   font-size: 16px;
   font-weight: bold;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s, transform 0.3s;
+  transition:
+    background-color 0.3s,
+    transform 0.3s;
   box-sizing: border-box;
   flex: 1;
   margin: 0 1px;

@@ -16,7 +16,12 @@
                 <div class="row gy-3 overflow-hidden">
                   <div class="col-12">
                     <div class="form-floating mb-3">
-                      <input type="text" class="form-control" v-model="username" placeholder="anv (Nguyễn Văn A)" />
+                      <input
+                        type="text"
+                        class="form-control"
+                        v-model="username"
+                        placeholder="anv (Nguyễn Văn A)"
+                      />
                       <label for="username" class="form-label">Tài khoản</label>
                     </div>
                   </div>
@@ -35,8 +40,16 @@
                   </div>
                   <div class="col-12">
                     <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="" name="remember_me" id="remember_me" />
-                      <label class="form-check-label text-secondary" for="remember_me"> Ghi nhớ đăng nhập </label>
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value=""
+                        name="remember_me"
+                        id="remember_me"
+                      />
+                      <label class="form-check-label text-secondary" for="remember_me">
+                        Ghi nhớ đăng nhập
+                      </label>
                     </div>
                   </div>
                   <div class="col-12">
@@ -56,7 +69,6 @@
 
 <script>
 import { toast } from "vue3-toastify";
-import "vue3-toastify/dist/index.css";
 import AuthService from "@/services/AuthService";
 import UserService from "@/services/UserService";
 import ProjectService from "@/services/ProjectService";

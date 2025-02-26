@@ -1,8 +1,5 @@
 <template>
-  <footer
-    class="text-white text-center text-lg-start"
-    style="background-color: #23242a"
-  >
+  <footer class="text-white text-center text-lg-start" style="background-color: #23242a">
     <!-- Grid container -->
     <div class="container-fluid p-5">
       <!--Grid row-->
@@ -12,13 +9,13 @@
           <h5 class="text-uppercase mb-4">About company</h5>
 
           <p>
-            At vero eos et accusamus et iusto odio dignissimos ducimus qui
-            blanditiis praesentium voluptatum deleniti atque corrupti.
+            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
+            voluptatum deleniti atque corrupti.
           </p>
 
           <p>
-            Blanditiis praesentium voluptatum deleniti atque corrupti quos
-            dolores et quas molestias.
+            Blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas
+            molestias.
           </p>
 
           <div class="mt-4 d-flex gap-2">
@@ -48,17 +45,8 @@
           <h5 class="text-uppercase mb-4 pb-1">Search something</h5>
 
           <div class="form-outline form-white mb-4">
-            <input
-              type="text"
-              id="formControlLg"
-              class="form-control form-control-lg"
-            />
-            <label
-              class="form-label"
-              for="formControlLg"
-              style="margin-left: 0px"
-              >Search</label
-            >
+            <input type="text" id="formControlLg" class="form-control form-control-lg" />
+            <label class="form-label" for="formControlLg" style="margin-left: 0px">Search</label>
             <div class="form-notch">
               <div class="form-notch-leading" style="width: 9px"></div>
               <div class="form-notch-middle" style="width: 48.8px"></div>
@@ -123,6 +111,4 @@
   </footer>
 </template>
 
-<script setup>
-
-</script>
+<script setup></script>

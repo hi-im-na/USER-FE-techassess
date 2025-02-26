@@ -1,5 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { AssessResultPage, HomePage, LoginPage, PersonalAssessPage, ProfilePage, TeammatesAssessPage } from "@/pages";
+import {
+  AssessResultPage,
+  HomePage,
+  LoginPage,
+  PersonalAssessPage,
+  ProfilePage,
+  TeammatesAssessPage,
+} from "@/pages";
 import AuthService from "@/services/AuthService";
 const routes = [
   { path: "/", component: HomePage },
