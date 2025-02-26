@@ -11,7 +11,7 @@
   <header class="site-navbar">
     <div class="container-fluid">
       <div class="row align-items-center">
-        <div class="col-6 d-flex align-items-center flex-wrap justify-content-between left-navbar">
+        <div class="col-lg-6 d-flex align-items-center flex-wrap justify-content-between left-navbar">
           <h1 class="mb-0 site-logo">
             <img src="@/assets/Techzenlogo.png" alt="logo" />
           </h1>
@@ -27,18 +27,13 @@
         <div class="col-6 d-none d-xl-block right-navbar">
           <nav class="site-navigation position-relative text-right" role="navigation">
             <ul class="site-menu js-clone-nav d-flex gap-2 justify-content-end mr-auto">
-              <li v-for="(item, index) in filteredMenuItems" :key="index" :class="{ active: activeIndex === index }">
-                <RouterLink :to="item.link"
-                  ><span>{{ item.text }}</span></RouterLink
-                >
+              <li v-for="(item, index) in menuItems" :key="index" :class="{ active: item.link === $route.path }">
+                <RouterLink :to="item.link"><span>{{ item.text }}</span></RouterLink>
               </li>
               <li v-if="userInfo">
                 <div class="user-info d-flex align-items-center">
-                  <img
-                    :src="userInfo.fileInfo ? userInfo.fileInfo.fileUrl : profileImage"
-                    alt="Avatar"
-                    class="avatar"
-                  />
+                  <img :src="userInfo.fileInfo ? userInfo.fileInfo.fileUrl : profileImage" alt="Avatar"
+                    class="avatar" />
                   <span class="ml-2 text-center" data-bs-toggle="dropdown">
                     {{ userInfo.rank.position.name }}
                     <br />
@@ -120,7 +115,7 @@ export default {
       const accessToken = localStorage.getItem("accessToken");
       if (accessToken) {
         this.userInfo = JSON.parse(localStorage.getItem("user"));
-        console.log(this.userInfo);
+        // console.log(this.userInfo);
         let haveTeammates = false;
         this.userInfo.userProjects.forEach((project) => {
           if (project.userProjects.length > 1) haveTeammates = true;
