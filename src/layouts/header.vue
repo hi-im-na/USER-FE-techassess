@@ -118,7 +118,7 @@ export default {
       const accessToken = localStorage.getItem("accessToken");
       if (accessToken) {
         this.userInfo = JSON.parse(localStorage.getItem("user"));
-        console.log(this.userInfo);
+        // console.log(this.userInfo);
         let haveTeammates = false;
         this.userInfo.userProjects.forEach((project) => {
           if (project.userProjects.length > 1) haveTeammates = true;
