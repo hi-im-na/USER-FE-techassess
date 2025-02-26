@@ -54,15 +54,15 @@ const AssessService = {
       const response = await request.get(`/api/assess/list-assess-of-user/${userId}`);
       localStorage.setItem(
         "manager-assessment",
-        JSON.stringify(response.data.data.filter((assess) => assess.assessmentType === "MANAGER"))
+        JSON.stringify(response.data.data.filter((assess) => assess.assessmentType === "MANAGER")),
       );
       localStorage.setItem(
         "self-assessment",
-        JSON.stringify(response.data.data.filter((assess) => assess.assessmentType === "SELF"))
+        JSON.stringify(response.data.data.filter((assess) => assess.assessmentType === "SELF")),
       );
       localStorage.setItem(
         "team-assessment",
-        JSON.stringify(response.data.data.filter((assess) => assess.assessmentType === "TEAM"))
+        JSON.stringify(response.data.data.filter((assess) => assess.assessmentType === "TEAM")),
       );
     } catch (error) {
       console.error("Error fetching typeAssessByUser:", error);
