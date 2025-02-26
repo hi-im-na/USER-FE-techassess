@@ -11,7 +11,9 @@
   <header class="site-navbar">
     <div class="container-fluid">
       <div class="row align-items-center">
-        <div class="col-6 d-flex align-items-center flex-wrap justify-content-between left-navbar">
+        <div
+          class="col-lg-6 d-flex align-items-center flex-wrap justify-content-between left-navbar"
+        >
           <h1 class="mb-0 site-logo">
             <img src="@/assets/Techzenlogo.png" alt="logo" />
           </h1>
@@ -27,7 +29,11 @@
         <div class="col-6 d-none d-xl-block right-navbar">
           <nav class="site-navigation position-relative text-right" role="navigation">
             <ul class="site-menu js-clone-nav d-flex gap-2 justify-content-end mr-auto">
-              <li v-for="(item, index) in filteredMenuItems" :key="index" :class="{ active: activeIndex === index }">
+              <li
+                v-for="(item, index) in menuItems"
+                :key="index"
+                :class="{ active: item.link === $route.path }"
+              >
                 <RouterLink :to="item.link"
                   ><span>{{ item.text }}</span></RouterLink
                 >
@@ -47,10 +53,14 @@
                   </span>
                   <ul class="dropdown-menu">
                     <li>
-                      <a :href="'/profile'" class="dropdown-item"> <i class="bi bi-person me-3"></i> Cá nhân </a>
+                      <a :href="'/profile'" class="dropdown-item">
+                        <i class="bi bi-person me-3"></i> Cá nhân
+                      </a>
                     </li>
                     <li @click.prevent="handleLogout">
-                      <a class="dropdown-item" href="#"> <i class="bi bi-box-arrow-right me-3"></i> Đăng xuất </a>
+                      <a class="dropdown-item" href="#">
+                        <i class="bi bi-box-arrow-right me-3"></i> Đăng xuất
+                      </a>
                     </li>
                   </ul>
                 </div>
@@ -65,7 +75,9 @@
         </div>
       </div>
       <div class="d-xl-none ml-md-0 mr-auto py-3">
-        <a href="#" class="site-menu-toggle js-menu-toggle text-white"><span class="icon-menu h3"></span></a>
+        <a href="#" class="site-menu-toggle js-menu-toggle text-white"
+          ><span class="icon-menu h3"></span
+        ></a>
       </div>
     </div>
   </header>
@@ -85,7 +97,6 @@ export default {
       countdown: "",
       countDownDate: new Date().getTime() + 5 * 24 * 60 * 60 * 1000, //đặt thời gian đếm ngược 5 ngày
       loading: true,
-      activeIndex: 0,
       userInfo: null,
       menuItems: [
         { text: "Trang chủ", link: "/" },
@@ -98,22 +109,9 @@ export default {
         "https://png.pngtree.com/png-clipart/20231216/original/pngtree-vector-office-worker-staff-avatar-employee-icon-png-image_13863941.png",
     };
   },
-  computed: {
-    filteredMenuItems() {
-      const items = [...this.menuItems];
-      return items;
-    },
-  },
   mounted() {
     this.checkUserLoggedIn();
     this.startCountdown();
-    this.checkActivePath();
-    window.addEventListener("resize", this.handleResize);
-    this.$router.beforeEach((to, from, next) => {
-      this.checkActivePath(to.path);
-      next();
-    });
-
   },
   methods: {
     checkUserLoggedIn() {
@@ -145,14 +143,6 @@ export default {
       this.$router.push("/login").then(() => {
         // Reload để đảm bảo header cập nhật lại
         window.location.reload();
-      });
-    },
-    checkActivePath(path = window.location.pathname) {
-      const items = this.filteredMenuItems;
-      items.forEach((item, index) => {
-        if (item.link === path) {
-          this.activeIndex = index;
-        }
       });
     },
     startCountdown() {
@@ -188,24 +178,6 @@ export default {
         this.loading = false;
       }, 1000);
     },
-    handleResize() {
-      const element = document.querySelector(".left-navbar"); // Thay '.element-class' bằng lớp bạn muốn theo dõi
-
-      if (window.innerWidth < 1200) {
-        // Khi cửa sổ nhỏ hơn 768px, xóa class
-        if (element) {
-          element.classList.remove("col-6"); // Thay 'some-class' bằng lớp cần xóa
-        }
-      } else {
-        // Nếu bạn muốn thêm lại class khi kích thước lớn hơn 768px
-        if (element) {
-          element.classList.add("col-6"); // Thay 'some-class' bằng lớp cần thêm lại
-        }
-      }
-    },
-  },
-  beforeUnmount() {
-    window.removeEventListener("resize", this.handleResize);
   },
 };
 </script>
