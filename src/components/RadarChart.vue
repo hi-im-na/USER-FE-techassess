@@ -13,27 +13,31 @@
 </template>
 
 <script>
-import { Radar } from 'vue-chartjs';
-import { RadarController, RadialLinearScale, PointElement, LineElement, Filler } from 'chart.js';
-import { Chart as ChartJS } from 'chart.js';
+import { Radar } from "vue-chartjs";
+import { RadarController, RadialLinearScale, PointElement, LineElement, Filler } from "chart.js";
+import { Chart as ChartJS } from "chart.js";
 
 ChartJS.register(RadarController, RadialLinearScale, PointElement, LineElement, Filler);
 
 export default {
-  name: 'RadarChart',
+  name: "RadarChart",
   components: {
-    Radar
+    Radar,
   },
   props: {
     data: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     hasData() {
-      return this.data.selfAssessment.length > 0 || this.data.manager.length > 0 || this.data.team.length > 0;
-    }
+      return (
+        this.data.selfAssessment.length > 0 ||
+        this.data.manager.length > 0 ||
+        this.data.team.length > 0
+      );
+    },
   },
   data() {
     return {
@@ -41,45 +45,45 @@ export default {
         labels: this.data.labels,
         datasets: [
           {
-            label: 'Tự đánh giá',
+            label: "Tự đánh giá",
             data: this.data.selfAssessment,
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderWidth: 1,
           },
           {
-            label: 'Quản Lý',
+            label: "Quản Lý",
             data: this.data.manager,
-            backgroundColor: 'rgba(255, 159, 64, 0.2)',
-            borderColor: 'rgba(255, 159, 64, 1)',
-            borderWidth: 1
+            backgroundColor: "rgba(255, 159, 64, 0.2)",
+            borderColor: "rgba(255, 159, 64, 1)",
+            borderWidth: 1,
           },
           {
-            label: 'Team',
+            label: "Team",
             data: this.data.team,
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1
-          }
-        ]
+            backgroundColor: "rgba(255, 99, 132, 0.2)",
+            borderColor: "rgba(255, 99, 132, 1)",
+            borderWidth: 1,
+          },
+        ],
       },
       chartOptions: {
         responsive: true,
         scales: {
           r: {
             angleLines: {
-              display: false
+              display: false,
             },
             suggestedMin: 0,
             suggestedMax: 5,
             ticks: {
-              stepSize: 1 // Đặt khoảng cách giữa các mốc là 1
-            }
-          }
-        }
-      }
+              stepSize: 1, // Đặt khoảng cách giữa các mốc là 1
+            },
+          },
+        },
+      },
     };
-  }
+  },
 };
 </script>
 
@@ -146,5 +150,4 @@ export default {
     transform: translateY(0);
   }
 }
-
 </style>

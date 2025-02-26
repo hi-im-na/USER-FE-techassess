@@ -1,5 +1,8 @@
 <template>
-  <div class="evaluation-header mb-2" style="display: flex; justify-content: space-between; align-items: center">
+  <div
+    class="evaluation-header mb-2"
+    style="display: flex; justify-content: space-between; align-items: center"
+  >
     <label class="fw-bold fs-4">
       Chi tiết đánh giá quý III năm 2024 của:
       {{ selectedPerson ? selectedPerson.name : "" }}
@@ -15,36 +18,48 @@
         </label>
       </div>
       <div v-if="criteria.questions && criteria.questions.length > 0">
-        <div v-for="(question, questionIndex) in criteria.questions" :key="question.id" class="question mb-3">
+        <div
+          v-for="(question, questionIndex) in criteria.questions"
+          :key="question.id"
+          class="question mb-3"
+        >
           <div class="d-flex justify-content-between title" v-if="question.title">
             <label> {{ questionIndex + 1 }}. {{ question.title }} </label>
           </div>
 
           <div v-if="question.answers" class="options d-flex justify-content-around my-3">
-            <div v-for="(answer, answerIndex) in question.answers" :key="answer.id" class="form-check">
-              <label :for="'performanceOption' +
-                criteriaIndex +
-                questionIndex +
-                answerIndex
-                " class="form-check-label">
+            <div
+              v-for="(answer, answerIndex) in question.answers"
+              :key="answer.id"
+              class="form-check"
+            >
+              <label
+                :for="'performanceOption' + criteriaIndex + questionIndex + answerIndex"
+                class="form-check-label"
+              >
                 {{ answer.title }}
               </label>
               <div class="avatar-group mt-2 d-flex justify-content-center">
-                <div style="position: relative; margin-right: 10px" class="avatar-container" v-for="(user, userIndex) in isShowAvatar(
-                  criteria.id,
-                  question.id,
-                  answer.value
-                )" :key="userIndex">
-                  <img :src="user.avt" alt="Avatar" class="avatar-img" :class="{
-                    'highlight-blue': user.id === userInfo.id,
-                    'highlight-yellow': user.id === selectedPerson.id
-                  }" style="cursor: pointer; border-radius: 50%;" />
+                <div
+                  style="position: relative; margin-right: 10px"
+                  class="avatar-container"
+                  v-for="(user, userIndex) in isShowAvatar(criteria.id, question.id, answer.value)"
+                  :key="userIndex"
+                >
+                  <img
+                    :src="user.avt"
+                    alt="Avatar"
+                    class="avatar-img"
+                    :class="{
+                      'highlight-blue': user.id === userInfo.id,
+                      'highlight-yellow': user.id === selectedPerson.id,
+                    }"
+                    style="cursor: pointer; border-radius: 50%"
+                  />
                   <span class="tooltiptext">
                     <div class="d-flex flex-column text-start">
                       <span class="fw-bold text-center">{{ user.name }}</span>
-                      <span>{{
-                        user.description ? user.description : ""
-                      }}</span>
+                      <span>{{ user.description ? user.description : "" }}</span>
                     </div>
                   </span>
                 </div>
@@ -54,9 +69,13 @@
         </div>
       </div>
       <div v-else class="spandes text-start">
-        <span v-for="(answer, index) in result.criterias.find((rc) => rc.id == criteria.id)?.answerUser || []"
-          :key="index">
-          {{ answer.fromUserName ? answer.fromUserName + ": " : "Cá nhân: " }} {{ answer.description }}<br>
+        <span
+          v-for="(answer, index) in result.criterias.find((rc) => rc.id == criteria.id)
+            ?.answerUser || []"
+          :key="index"
+        >
+          {{ answer.fromUserName ? answer.fromUserName + ": " : "Cá nhân: " }}
+          {{ answer.description }}<br />
         </span>
       </div>
     </div>
@@ -100,7 +119,7 @@ export default {
         }
       },
     },
-    'selectedPerson.userProjects.0.id': {
+    "selectedPerson.userProjects.0.id": {
       handler(newValue) {
         if (newValue) {
           this.loadCriteria();
@@ -115,10 +134,7 @@ export default {
   methods: {
     async updateDepartmentId() {
       if (this.selectedPerson && this.selectedPerson.departmentId) {
-        localStorage.setItem(
-          "userDepartmentId",
-          JSON.stringify(this.selectedPerson.departmentId)
-        );
+        localStorage.setItem("userDepartmentId", JSON.stringify(this.selectedPerson.departmentId));
         await this.loadCriteria(); // Gọi lại API với departmentId mới
       }
     },
@@ -150,9 +166,7 @@ export default {
       try {
         const response = await AssessService.fetchAssessOfUser(userId);
         this.listAssess = response.data;
-        this.selfAssessDetails = response.data.filter(
-          (assess) => assess.assessmentType === "SELF"
-        );
+        this.selfAssessDetails = response.data.filter((assess) => assess.assessmentType === "SELF");
         if (this.listAssess.length == 0) return;
 
         this.listAssess.forEach(async (assess) => {
@@ -164,7 +178,7 @@ export default {
               // Kiểm tra `criteria` có tồn tại trước khi truy cập `id`
               if (assessDetail.criteria && assessDetail.criteria.id != null) {
                 let resultCriteria = this.result.criterias.find(
-                  (criteria) => criteria.id === assessDetail.criteria.id
+                  (criteria) => criteria.id === assessDetail.criteria.id,
                 );
 
                 // Nếu không tồn tại, thêm tiêu chí mới vào
@@ -180,17 +194,11 @@ export default {
 
                 // Tìm xem câu hỏi đã tồn tại trong bất kỳ tiêu chí nào của `criterias` không
                 const questionExists = this.result.criterias.some((criteria) =>
-                  criteria.questions.some(
-                    (question) => question.id === assessDetail.question?.id
-                  )
+                  criteria.questions.some((question) => question.id === assessDetail.question?.id),
                 );
 
                 // Nếu câu hỏi chưa tồn tại và assessDetail.question hợp lệ, thêm vào
-                if (
-                  !questionExists &&
-                  assessDetail.question &&
-                  assessDetail.question.id != null
-                ) {
+                if (!questionExists && assessDetail.question && assessDetail.question.id != null) {
                   const resultQuestion = {
                     id: assessDetail.question.id,
                     title: assessDetail.question.title,
@@ -200,33 +208,26 @@ export default {
                   resultCriteria.questions.push(resultQuestion);
                 }
 
-                if (
-                  assessDetail.question &&
-                  assessDetail.value != null &&
-                  user
-                ) {
+                if (assessDetail.question && assessDetail.value != null && user) {
                   const resultQuestion = resultCriteria.questions.find(
-                    (question) => question.id === assessDetail.question.id
+                    (question) => question.id === assessDetail.question.id,
                   );
 
                   if (resultQuestion) {
                     const answer = assessDetail.question.answers.find(
-                      (ans) => ans.value === assessDetail.value
+                      (ans) => ans.value === assessDetail.value,
                     );
 
                     if (answer) {
-                      const existingAnswerUser =
-                        resultQuestion.answerUsers.find(
-                          (u) => u.id === answer.id
-                        );
+                      const existingAnswerUser = resultQuestion.answerUsers.find(
+                        (u) => u.id === answer.id,
+                      );
 
                       if (existingAnswerUser) {
                         // Nếu user đã tồn tại trong câu trả lời, thêm vào mảng fromUsers
                         existingAnswerUser.fromUsers.push({
                           id: user.id,
-                          avt: user.fileInfo
-                            ? user.fileInfo.fileUrl
-                            : "/images/avatar.png",
+                          avt: user.fileInfo ? user.fileInfo.fileUrl : "/images/avatar.png",
                           name: user.name,
                           description: assessDetail.description,
                         });
@@ -239,9 +240,7 @@ export default {
                           fromUsers: [
                             {
                               id: user.id,
-                              avt: user.fileInfo
-                                ? user.fileInfo.fileUrl
-                                : "/images/avatar.png",
+                              avt: user.fileInfo ? user.fileInfo.fileUrl : "/images/avatar.png",
                               name: user.name,
                               description: assessDetail.description,
                             },
@@ -277,23 +276,20 @@ export default {
             });
           }
         });
-
       } catch (error) {
         console.error("Error fetching assess by userid:", error);
       }
     },
     async loadCriteria() {
       try {
-        const departmentId = JSON.parse(
-          localStorage.getItem("userDepartmentId")
-        );
+        const departmentId = JSON.parse(localStorage.getItem("userDepartmentId"));
         const res = await AssessService.fetchListData(departmentId);
         if (res.code === 20403) {
           this.listCriteria = res.data.criteria;
         }
 
         this.listCriteria = this.listCriteria.filter(
-          (c) => c.visibleFor !== "MANAGER" && c.questionId !== null
+          (c) => c.visibleFor !== "MANAGER" && c.questionId !== null,
         );
       } catch (error) {
         console.error("Error fetching criteria list:", error);
@@ -393,7 +389,7 @@ export default {
   -webkit-overflow-scrolling: touch;
 }
 
-.table>table {
+.table > table {
   width: 100%;
   margin-bottom: 1rem;
   border-collapse: collapse;
@@ -446,7 +442,7 @@ export default {
   padding-left: 20px;
 }
 
-.content>p {
+.content > p {
   color: black;
 }
 
@@ -525,8 +521,7 @@ export default {
   border-width: 0;
   color: #333333;
   display: inline-block;
-  font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial,
-    sans-serif;
+  font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
@@ -584,7 +579,9 @@ export default {
   /* Viền của dropdown */
   border-radius: 0.25rem;
   /* Bo góc của dropdown */
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
   /* Hiệu ứng chuyển tiếp */
 }
 
@@ -646,7 +643,6 @@ export default {
 
 /* Đối với màn hình trung bình (máy tính bảng) */
 @media (min-width: 576px) and (max-width: 768px) {
-
   .left-menu,
   .right-menu {
     height: auto;

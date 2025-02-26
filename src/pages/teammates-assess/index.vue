@@ -1,15 +1,11 @@
 <template>
-  <div
-    class="container-fluid row justify-content-md-center align-items-center"
-    v-if="profile"
-  >
+  <div class="container-fluid row justify-content-md-center align-items-center" v-if="profile">
     <!-- Left Menu -->
     <div
       :class="[
         'left-menu p-3 d-flex flex-column',
-        !userInfo.userRoles.some(
-          (role) => role.role.id === 3 && role.role.name === 'MANAGER'
-        ) && !firstUnsubmitted
+        !userInfo.userRoles.some((role) => role.role.id === 3 && role.role.name === 'MANAGER') &&
+        !firstUnsubmitted
           ? 'col-md-8'
           : 'col-md-4',
       ]"
@@ -17,24 +13,18 @@
       <div
         :class="[
           'profile mb-3 d-flex align-items-center justify-content-around',
-          !userInfo.userRoles.some(
-            (role) => role.role.id === 3 && role.role.name === 'MANAGER'
-          ) && !firstUnsubmitted
+          !userInfo.userRoles.some((role) => role.role.id === 3 && role.role.name === 'MANAGER') &&
+          !firstUnsubmitted
             ? 'd-none'
             : 'd-flex',
         ]"
       >
         <div class="avatar">
-          <img
-            :src="profile.fileInfo?.fileUrl || defaultImage"
-            alt="avatar"
-          />
+          <img :src="profile.fileInfo?.fileUrl || defaultImage" alt="avatar" />
         </div>
         <div class="info ms-3 text-start">
           <h3 class="mb-2">{{ profile.name }}</h3>
-          <div class="line">
-            <strong>Vị trí:</strong> {{ profile.rank.position.name }}
-          </div>
+          <div class="line"><strong>Vị trí:</strong> {{ profile.rank.position.name }}</div>
           <div class="line" v-if="checkRole('MANAGER')">
             <strong>Bậc hiện tại:</strong> {{ profile.rank.level }}
           </div>
@@ -45,20 +35,12 @@
         </div>
       </div>
       <div class="team-mate">
-        <div class="text-start fw-bold">
-          Danh sách thành viên có chung dự án hiện tại:
-        </div>
+        <div class="text-start fw-bold">Danh sách thành viên có chung dự án hiện tại:</div>
         <table class="table">
           <thead class="thead-light">
             <tr>
               <th>#</th>
-              <th
-                @click="sortBy('name')"
-                class="text-start"
-                style="cursor: pointer"
-              >
-                Tên
-              </th>
+              <th @click="sortBy('name')" class="text-start" style="cursor: pointer">Tên</th>
               <th>Vị Trí</th>
               <th>Tác Vụ</th>
             </tr>
@@ -132,12 +114,12 @@
         {
           'd-none':
             !userInfo.userRoles.some(
-              (role) => role.role.id === 3 && role.role.name === 'MANAGER'
+              (role) => role.role.id === 3 && role.role.name === 'MANAGER',
             ) && !firstUnsubmitted,
         },
         {
           'd-flex': userInfo.userRoles.some(
-            (role) => role.role.id === 3 && role.role.name === 'MANAGER'
+            (role) => role.role.id === 3 && role.role.name === 'MANAGER',
           ),
         },
       ]"
@@ -152,7 +134,6 @@
   </div>
 </template>
 <script>
-import "vue3-toastify/dist/index.css";
 import TeamAssessDetailsForm from "./TeamAssessDetailsForm.vue";
 import TeamAssessForm from "./TeamAssessForm.vue";
 import UserService from "@/services/UserService.js";
@@ -224,9 +205,7 @@ export default {
       }
     },
     checkRole(role) {
-      return this.userInfo.userRoles.some(
-        (usRole) => usRole.role.name === role
-      );
+      return this.userInfo.userRoles.some((usRole) => usRole.role.name === role);
     },
     initializeUserInfo() {
       const user = localStorage.getItem("user");
@@ -256,9 +235,7 @@ export default {
 
         // Bảo toàn các trạng thái cũ
         this.teamMates = res.data.map((person) => {
-          const existingMember = this.teamMates.find(
-            (mate) => mate.id === person.id
-          );
+          const existingMember = this.teamMates.find((mate) => mate.id === person.id);
 
           return {
             ...person,
@@ -279,9 +256,7 @@ export default {
           // Chờ tất cả các dự án được fetch xong
           const projects = await Promise.all(projectPromises);
           // Lọc ra các dự án hợp lệ và thêm vào userProjects
-          mate.userProjects = projects.filter(
-            (project) => project !== undefined
-          );
+          mate.userProjects = projects.filter((project) => project !== undefined);
         });
 
         await Promise.all(fetchProjectPromises);
@@ -290,9 +265,7 @@ export default {
         await this.fetchAssessByUser();
 
         // Chọn thành viên đầu tiên chưa nộp
-        const firstUnsubmitted = this.teamMates.find(
-          (person) => !person.isSubmitted
-        );
+        const firstUnsubmitted = this.teamMates.find((person) => !person.isSubmitted);
 
         if (firstUnsubmitted) {
           firstUnsubmitted.isProcessing = true;
@@ -317,14 +290,10 @@ export default {
       }
     },
     updateAssessmentStatus() {
-      this.assessBy = JSON.parse(
-        localStorage.getItem("assess-by-user" + this.userInfo.id)
-      );
+      this.assessBy = JSON.parse(localStorage.getItem("assess-by-user" + this.userInfo.id));
       if (this.assessBy) {
         this.teamMates.forEach((person) => {
-          const assess = this.assessBy.find(
-            (assess) => assess.toUserId === person.id
-          );
+          const assess = this.assessBy.find((assess) => assess.toUserId === person.id);
           if (assess) {
             person.isSubmitted = true;
           }
@@ -386,10 +355,7 @@ export default {
         person.isProcessing = !person.isProcessing;
       }
       this.isViewing = false;
-      localStorage.setItem(
-        "userDepartmentId",
-        this.selectedPerson.departmentId
-      );
+      localStorage.setItem("userDepartmentId", this.selectedPerson.departmentId);
     },
     sortBy(key) {
       if (this.sortKey === key) {
@@ -403,7 +369,7 @@ export default {
       const userInfo = localStorage.getItem("userInfo");
       console.log(
         "userInfo.userRoles.some(role => role.role.id !== 3 && role.role.name !== 'MANAGER') : ",
-        userInfo
+        userInfo,
       );
 
       if (userInfo && userInfo.dateJoinCompany) {
@@ -416,11 +382,7 @@ export default {
 
         if (days < 0) {
           months--;
-          days += new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth(),
-            0
-          ).getDate();
+          days += new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
         }
 
         if (months < 0) {
@@ -447,9 +409,7 @@ export default {
     handleUpdateSelectedPerson(updatedPerson) {
       this.selectedPerson = null;
       //update selectedPerson vào teamMates
-      const index = this.teamMates.findIndex(
-        (person) => person.id === updatedPerson.id
-      );
+      const index = this.teamMates.findIndex((person) => person.id === updatedPerson.id);
       if (index !== -1) {
         this.teamMates[index] = updatedPerson;
       }

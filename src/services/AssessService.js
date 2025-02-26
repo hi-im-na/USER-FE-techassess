@@ -1,21 +1,22 @@
 import request from "@/utils/request";
 const AssessService = {
-  fetchMyAssess: async (userId) => {
+  fetchMyAssess: async (userId, projectId) => {
     try {
-      const response = await request.get(`/api/assess/${userId}`);
+      const response = await request.get(`/api/assess?userId=${userId}&projectId=${projectId}`);
       localStorage.setItem("myAssess", JSON.stringify(response.data.data));
       return response.data;
     } catch (error) {
       console.error("Error fetching myAssess:", error);
     }
   },
-  submitForm: async (userId, toUserId, totalPoint, data) => {
+  submitForm: async (userId, toUserId, totalPoint, data, projectId) => {
     try {
       const response = await request.post(`/api/assess/save-assess`, {
         userId: userId,
         toUserId: toUserId,
         totalPoint: totalPoint,
         assessDetails: data.assessDetails,
+        projectId,
       });
       return response.data;
     } catch (error) {
@@ -54,15 +55,15 @@ const AssessService = {
       const response = await request.get(`/api/assess/list-assess-of-user/${userId}`);
       localStorage.setItem(
         "manager-assessment",
-        JSON.stringify(response.data.data.filter((assess) => assess.assessmentType === "MANAGER"))
+        JSON.stringify(response.data.data.filter((assess) => assess.assessmentType === "MANAGER")),
       );
       localStorage.setItem(
         "self-assessment",
-        JSON.stringify(response.data.data.filter((assess) => assess.assessmentType === "SELF"))
+        JSON.stringify(response.data.data.filter((assess) => assess.assessmentType === "SELF")),
       );
       localStorage.setItem(
         "team-assessment",
-        JSON.stringify(response.data.data.filter((assess) => assess.assessmentType === "TEAM"))
+        JSON.stringify(response.data.data.filter((assess) => assess.assessmentType === "TEAM")),
       );
     } catch (error) {
       console.error("Error fetching typeAssessByUser:", error);

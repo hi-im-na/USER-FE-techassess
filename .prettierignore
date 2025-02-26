@@ -1,0 +1,7 @@
+node_modules
+public
+.vscode
+.husky
+index.html
+pnpm-lock.json
+README.md
