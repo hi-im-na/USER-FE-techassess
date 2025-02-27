@@ -11,7 +11,11 @@
 
   <form class="evaluation-form">
     <!-- Performance Evaluation -->
-    <div v-for="(criteria, criteriaIndex) in listCriteria" :key="criteria.id" class="section mb-4">
+    <div
+      v-for="(criteria, criteriaIndex) in listCriteria"
+      :key="criteria.id"
+      class="section mb-4"
+    >
       <div class="d-flex justify-content-between">
         <label class="d-flex gap-2">
           <h5>{{ criteria.title }}</h5>
@@ -23,18 +27,29 @@
           :key="question.id"
           class="question mb-3"
         >
-          <div class="d-flex justify-content-between title" v-if="question.title">
+          <div
+            class="d-flex justify-content-between title"
+            v-if="question.title"
+          >
             <label> {{ questionIndex + 1 }}. {{ question.title }} </label>
           </div>
 
-          <div v-if="question.answers" class="options d-flex justify-content-around my-3">
+          <div
+            v-if="question.answers"
+            class="options d-flex justify-content-around my-3"
+          >
             <div
               v-for="(answer, answerIndex) in question.answers"
               :key="answer.id"
               class="form-check"
             >
               <label
-                :for="'performanceOption' + criteriaIndex + questionIndex + answerIndex"
+                :for="
+                  'performanceOption' +
+                  criteriaIndex +
+                  questionIndex +
+                  answerIndex
+                "
                 class="form-check-label"
               >
                 {{ answer.title }}
@@ -43,7 +58,11 @@
                 <div
                   style="position: relative; margin-right: 10px"
                   class="avatar-container"
-                  v-for="(user, userIndex) in isShowAvatar(criteria.id, question.id, answer.value)"
+                  v-for="(user, userIndex) in isShowAvatar(
+                    criteria.id,
+                    question.id,
+                    answer.value,
+                  )"
                   :key="userIndex"
                 >
                   <img
@@ -59,7 +78,9 @@
                   <span class="tooltiptext">
                     <div class="d-flex flex-column text-start">
                       <span class="fw-bold text-center">{{ user.name }}</span>
-                      <span>{{ user.description ? user.description : "" }}</span>
+                      <span>{{
+                        user.description ? user.description : ""
+                      }}</span>
                     </div>
                   </span>
                 </div>
@@ -70,8 +91,9 @@
       </div>
       <div v-else class="spandes text-start">
         <span
-          v-for="(answer, index) in result.criterias.find((rc) => rc.id == criteria.id)
-            ?.answerUser || []"
+          v-for="(answer, index) in result.criterias.find(
+            (rc) => rc.id == criteria.id,
+          )?.answerUser || []"
           :key="index"
         >
           {{ answer.fromUserName ? answer.fromUserName + ": " : "Cá nhân: " }}
@@ -90,6 +112,7 @@ export default {
   props: {
     userInfo: Object,
     selectedPerson: Object,
+    projectSelected: Number,
   },
   data() {
     return {
@@ -134,7 +157,10 @@ export default {
   methods: {
     async updateDepartmentId() {
       if (this.selectedPerson && this.selectedPerson.departmentId) {
-        localStorage.setItem("userDepartmentId", JSON.stringify(this.selectedPerson.departmentId));
+        localStorage.setItem(
+          "userDepartmentId",
+          JSON.stringify(this.selectedPerson.departmentId),
+        );
         await this.loadCriteria(); // Gọi lại API với departmentId mới
       }
     },
@@ -166,7 +192,9 @@ export default {
       try {
         const response = await AssessService.fetchAssessOfUser(userId);
         this.listAssess = response.data;
-        this.selfAssessDetails = response.data.filter((assess) => assess.assessmentType === "SELF");
+        this.selfAssessDetails = response.data.filter(
+          (assess) => assess.assessmentType === "SELF",
+        );
         if (this.listAssess.length == 0) return;
 
         this.listAssess.forEach(async (assess) => {
@@ -194,11 +222,17 @@ export default {
 
                 // Tìm xem câu hỏi đã tồn tại trong bất kỳ tiêu chí nào của `criterias` không
                 const questionExists = this.result.criterias.some((criteria) =>
-                  criteria.questions.some((question) => question.id === assessDetail.question?.id),
+                  criteria.questions.some(
+                    (question) => question.id === assessDetail.question?.id,
+                  ),
                 );
 
                 // Nếu câu hỏi chưa tồn tại và assessDetail.question hợp lệ, thêm vào
-                if (!questionExists && assessDetail.question && assessDetail.question.id != null) {
+                if (
+                  !questionExists &&
+                  assessDetail.question &&
+                  assessDetail.question.id != null
+                ) {
                   const resultQuestion = {
                     id: assessDetail.question.id,
                     title: assessDetail.question.title,
@@ -208,7 +242,11 @@ export default {
                   resultCriteria.questions.push(resultQuestion);
                 }
 
-                if (assessDetail.question && assessDetail.value != null && user) {
+                if (
+                  assessDetail.question &&
+                  assessDetail.value != null &&
+                  user
+                ) {
                   const resultQuestion = resultCriteria.questions.find(
                     (question) => question.id === assessDetail.question.id,
                   );
@@ -219,15 +257,18 @@ export default {
                     );
 
                     if (answer) {
-                      const existingAnswerUser = resultQuestion.answerUsers.find(
-                        (u) => u.id === answer.id,
-                      );
+                      const existingAnswerUser =
+                        resultQuestion.answerUsers.find(
+                          (u) => u.id === answer.id,
+                        );
 
                       if (existingAnswerUser) {
                         // Nếu user đã tồn tại trong câu trả lời, thêm vào mảng fromUsers
                         existingAnswerUser.fromUsers.push({
                           id: user.id,
-                          avt: user.fileInfo ? user.fileInfo.fileUrl : "/images/avatar.png",
+                          avt: user.fileInfo
+                            ? user.fileInfo.fileUrl
+                            : "/images/avatar.png",
                           name: user.name,
                           description: assessDetail.description,
                         });
@@ -240,7 +281,9 @@ export default {
                           fromUsers: [
                             {
                               id: user.id,
-                              avt: user.fileInfo ? user.fileInfo.fileUrl : "/images/avatar.png",
+                              avt: user.fileInfo
+                                ? user.fileInfo.fileUrl
+                                : "/images/avatar.png",
                               name: user.name,
                               description: assessDetail.description,
                             },
@@ -282,7 +325,9 @@ export default {
     },
     async loadCriteria() {
       try {
-        const departmentId = JSON.parse(localStorage.getItem("userDepartmentId"));
+        const departmentId = JSON.parse(
+          localStorage.getItem("userDepartmentId"),
+        );
         const res = await AssessService.fetchListData(departmentId);
         if (res.code === 20403) {
           this.listCriteria = res.data.criteria;
@@ -521,7 +566,8 @@ export default {
   border-width: 0;
   color: #333333;
   display: inline-block;
-  font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family:
+    "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
