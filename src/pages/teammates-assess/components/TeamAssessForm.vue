@@ -396,13 +396,16 @@ export default {
 
       if (userPosition === "LEADER") {
         try {
-          const numberOfUserInTeam =
-            await UserService.fetchTeamsByUserId(userID);
+          const numberOfUserInTeam = await UserService.fetchTeamsByUserId(
+            userID,
+            this.projectSelected,
+          );
 
           const recordCheckRes = await AssessService.fetchAssessOfUser(
             this.selectedPerson.id,
           );
-
+          console.log(numberOfUserInTeam);
+          console.log(recordCheckRes);
           if (recordCheckRes.code === 1010) {
             const recordCount = recordCheckRes.data.length;
 
