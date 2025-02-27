@@ -42,11 +42,29 @@
       <div class="friends-list">
         <div class="friends-header">
           <div class="search-bar">
-            <input type="text" placeholder="Search Friends" v-model="searchTerm" />
+            <input
+              type="text"
+              placeholder="Search Friends"
+              v-model="searchTerm"
+            />
           </div>
+          <Select
+            @change="handleSelectProject"
+            v-model="projectSelected"
+            :options="userInfo?.userProjects"
+            optionLabel="name"
+            option-value="id"
+            placeholder="Select a Project"
+            class="tw-w-full md:tw-w-40"
+            size="small"
+          />
         </div>
         <div class="friends-row">
-          <div class="friend-card" v-for="(mate, index) in filteredTeamMates" :key="index">
+          <div
+            class="friend-card"
+            v-for="(mate, index) in filteredTeamMates"
+            :key="index"
+          >
             <img :src="mate.fileInfo?.fileUrl || defaultAvatar" alt="Avatar" />
             <h2>{{ mate.name }}</h2>
             <p>{{ mate.position }}</p>
@@ -60,7 +78,13 @@
           <span class="close" @click="isEditing = false">&times;</span>
           <h2>Cập nhật ảnh đại diện</h2>
           <input type="file" @change="onFileChange" accept="image/*" />
-          <button v-if="!isUpdating" class="btn btn-primary" @click="uploadAvatar">Lưu</button>
+          <button
+            v-if="!isUpdating"
+            class="btn btn-primary"
+            @click="uploadAvatar"
+          >
+            Lưu
+          </button>
           <button v-else disabled class="btn btn-danger">Đang cập nhật</button>
         </div>
       </div>
@@ -71,9 +95,12 @@
 <script>
 import UserService from "@/services/UserService";
 import { toast } from "vue3-toastify";
-
+import { Select } from "primevue";
 export default {
   name: "ProfilePage",
+  components: {
+    Select,
+  },
   data() {
     return {
       userInfo: null,
@@ -85,6 +112,7 @@ export default {
         "https://png.pngtree.com/png-clipart/20231216/original/pngtree-vector-office-worker-staff-avatar-employee-icon-png-image_13863941.png",
       avatarUpdate: null,
       isUpdating: false,
+      projectSelected: JSON.parse(localStorage.getItem("projectSelected")) || 1,
     };
   },
   mounted() {
@@ -117,6 +145,12 @@ export default {
     },
   },
   methods: {
+    handleSelectProject(e) {
+      localStorage.setItem("projectSelected", e.value);
+      setTimeout(() => {
+        window.location.reload();
+      }, 0);
+    },
     editProfile() {
       this.isEditing = true; // Mở modal
     },
@@ -136,7 +170,10 @@ export default {
       formData.append("request", JSON.stringify(this.userInfo)); // Thông tin người dùng nếu cần
 
       try {
-        const response = await UserService.uploadAvatar(this.userInfo, formData);
+        const response = await UserService.uploadAvatar(
+          this.userInfo,
+          formData,
+        );
         if (response.code === 1013) {
           toast.success("Cập nhật avatar thành công!");
           const res = await UserService.fetchUserById(this.userInfo.id);
@@ -163,7 +200,10 @@ export default {
       }
 
       try {
-        const response = await UserService.fetchTeamsByUserId(this.userInfo.id);
+        const response = await UserService.fetchTeamsByUserId(
+          this.userInfo.id,
+          this.projectSelected,
+        );
         if (response.data) {
           this.teamMates = response.data;
         } else {
@@ -189,6 +229,7 @@ export default {
 .edit-btn:hover {
   cursor: pointer;
 }
+
 .background-container {
   background-color: #4e7fcf;
   min-height: 100vh;
@@ -197,6 +238,7 @@ export default {
   align-items: center;
   padding-top: 100px;
 }
+
 .container {
   display: flex;
   flex-direction: column;
@@ -249,29 +291,40 @@ export default {
 
 .details {
   display: grid;
-  grid-template-columns: 150px 1fr; /* Cột đầu rộng 150px, cột sau tự động dãn */
-  gap: 10px 20px; /* Khoảng cách giữa các dòng và các cột */
-  align-items: center; /* Căn giữa các phần tử trong hàng */
+  grid-template-columns: 150px 1fr;
+  /* Cột đầu rộng 150px, cột sau tự động dãn */
+  gap: 10px 20px;
+  /* Khoảng cách giữa các dòng và các cột */
+  align-items: center;
+  /* Căn giữa các phần tử trong hàng */
 }
 
 .detail {
-  display: contents; /* Để giữ các phần tử label và span nằm trên cùng một grid */
+  display: contents;
+  /* Để giữ các phần tử label và span nằm trên cùng một grid */
 }
 
 label {
   font-weight: bold;
-  text-align: left; /* Căn chữ của label sát trái */
-  position: relative; /* Sử dụng relative để căn dấu : */
-  padding-right: 10px; /* Khoảng cách giữa chữ và dấu : */
+  text-align: left;
+  /* Căn chữ của label sát trái */
+  position: relative;
+  /* Sử dụng relative để căn dấu : */
+  padding-right: 10px;
+  /* Khoảng cách giữa chữ và dấu : */
 }
 
 label::after {
-  content: ":"; /* Thêm dấu : */
+  content: ":";
+  /* Thêm dấu : */
   position: absolute;
-  right: 0; /* Căn dấu : sát phải */
+  right: 0;
+  /* Căn dấu : sát phải */
 }
+
 span {
-  text-align: left; /* Căn trái cho giá trị */
+  text-align: left;
+  /* Căn trái cho giá trị */
 }
 
 .detail label {
@@ -361,6 +414,7 @@ h1 {
   font-size: 16px;
   color: #666;
 }
+
 .modal {
   display: flex;
   justify-content: center;
