@@ -409,12 +409,12 @@ export default {
           if (recordCheckRes.code === 1010) {
             const recordCount = recordCheckRes.data.length;
 
-            if (recordCount !== numberOfUserInTeam.data.length) {
-              toast.error(
-                "Số lượng đánh giá của nhân viên chưa đủ. Vui lòng kiểm tra lại!",
-              );
-              return;
-            }
+            // if (recordCount !== numberOfUserInTeam.data.length) {
+            //   toast.error(
+            //     "Số lượng đánh giá của nhân viên chưa đủ. Vui lòng kiểm tra lại!",
+            //   );
+            //   return;
+            // }
           } else {
             toast.error(
               "Không thể kiểm tra số lượng bản ghi. Vui lòng thử lại!",
@@ -491,14 +491,14 @@ export default {
         );
         if (res.code === 201) {
           toast.success("Đánh giá thành công!", {
-            autoClose: 2000,
+            autoClose: 1000,
           });
         } else {
           toast.error("Đánh giá thất bại. Vui lòng quay lại sau!");
         }
         setTimeout(() => {
           window.location.reload();
-        }, 2000);
+        }, 1000);
       } catch (error) {
         toast.error("Đánh giá thất bại. Vui lòng quay lại sau!");
         console.error("Error submitting form:", error);

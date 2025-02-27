@@ -7,9 +7,10 @@
     <div
       :class="[
         'left-menu p-3 d-flex flex-column',
-        !userInfo.userRoles.some(
-          (role) => role.role.id === 3 && role.role.name === 'MANAGER',
-        ) && !firstUnsubmitted
+        // !userInfo.userRoles.some(
+        //   (role) => role.role.id === 3 && role.role.name === 'MANAGER',
+        // ) && !firstUnsubmitted
+        userInfo.rank.position.name !== 'LEADER' && !firstUnsubmitted
           ? 'col-md-8'
           : 'col-md-4',
       ]"
@@ -17,9 +18,10 @@
       <div
         :class="[
           'profile mb-3 d-flex align-items-center justify-content-around',
-          !userInfo.userRoles.some(
-            (role) => role.role.id === 3 && role.role.name === 'MANAGER',
-          ) && !firstUnsubmitted
+          // !userInfo.userRoles.some(
+          //   (role) => role.role.id === 3 && role.role.name === 'MANAGER',
+          // ) && !firstUnsubmitted
+          userInfo.rank.position.name !== 'LEADER' && !firstUnsubmitted
             ? 'd-none'
             : 'd-flex',
         ]"
@@ -32,7 +34,7 @@
           <div class="line">
             <strong>Vị trí:</strong> {{ profile.rank.position.name }}
           </div>
-          <div class="line" v-if="checkRole('MANAGER')">
+          <div class="line" v-if="checkPosition('LEADER')">
             <strong>Bậc hiện tại:</strong> {{ profile.rank.level }}
           </div>
           <div class="line tw-space-x-2">
@@ -79,7 +81,7 @@
               <td class="d-flex justify-content-center">
                 <div class="d-flex">
                   <button
-                    v-if="mate.isSubmitted && !checkRole('MANAGER')"
+                    v-if="mate.isSubmitted && !checkPosition('LEADER')"
                     class="btn btn-sm btn-success btn-custom"
                     :disabled="true"
                   >
@@ -100,7 +102,7 @@
                     Đánh giá
                   </button>
                 </div>
-                <div v-if="checkRole('MANAGER')">
+                <div v-if="checkPosition('LEADER')">
                   <button
                     v-if="mate.isViewing"
                     class="btn btn-sm btn-warning btn-custom"
@@ -139,14 +141,17 @@
         'col-md-8 right-menu p-4',
         {
           'd-none':
-            !userInfo.userRoles.some(
-              (role) => role.role.id === 3 && role.role.name === 'MANAGER',
-            ) && !firstUnsubmitted,
+            userInfo.rank.position.name !== 'LEADER' && !firstUnsubmitted,
+          // !userInfo.userRoles.some(
+          //   (role) => role.role.id === 3 && role.role.name === 'MANAGER',
+          // ) && !firstUnsubmitted,
         },
         {
-          'd-flex': userInfo.userRoles.some(
-            (role) => role.role.id === 3 && role.role.name === 'MANAGER',
-          ),
+          'd-flex': userInfo.rank.position.name === 'LEADER',
+          // userInfo.userRoles.some(
+          //   (role) => role.role.id === 3 && role.role.name === 'MANAGER',
+          // ),
+          // 'd-flex': userInfo.rank.position.name === 'LEADER'
         },
       ]"
     >
@@ -244,6 +249,9 @@ export default {
       return this.userInfo.userRoles.some(
         (usRole) => usRole.role.name === role,
       );
+    },
+    checkPosition(p) {
+      return this.userInfo.rank.position.name === p;
     },
     initializeUserInfo() {
       const user = localStorage.getItem("user");
@@ -422,7 +430,7 @@ export default {
     calculateWorkTime() {
       const userInfo = localStorage.getItem("userInfo");
       console.log(
-        "userInfo.userRoles.some(role => role.role.id !== 3 && role.role.name !== 'MANAGER') : ",
+        "userInfo.userRoles.some(role => role.role.id !== 3 && role.role.name !== 'LEADER') : ",
         userInfo,
       );
 
