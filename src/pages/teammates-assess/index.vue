@@ -1,11 +1,15 @@
 <template>
-  <div class="container-fluid row justify-content-md-center align-items-center" v-if="profile">
+  <div
+    class="container-fluid row justify-content-md-center align-items-center"
+    v-if="profile"
+  >
     <!-- Left Menu -->
     <div
       :class="[
         'left-menu p-3 d-flex flex-column',
-        !userInfo.userRoles.some((role) => role.role.id === 3 && role.role.name === 'MANAGER') &&
-        !firstUnsubmitted
+        !userInfo.userRoles.some(
+          (role) => role.role.id === 3 && role.role.name === 'MANAGER',
+        ) && !firstUnsubmitted
           ? 'col-md-8'
           : 'col-md-4',
       ]"
@@ -13,8 +17,9 @@
       <div
         :class="[
           'profile mb-3 d-flex align-items-center justify-content-around',
-          !userInfo.userRoles.some((role) => role.role.id === 3 && role.role.name === 'MANAGER') &&
-          !firstUnsubmitted
+          !userInfo.userRoles.some(
+            (role) => role.role.id === 3 && role.role.name === 'MANAGER',
+          ) && !firstUnsubmitted
             ? 'd-none'
             : 'd-flex',
         ]"
@@ -24,23 +29,44 @@
         </div>
         <div class="info ms-3 text-start">
           <h3 class="mb-2">{{ profile.name }}</h3>
-          <div class="line"><strong>Vị trí:</strong> {{ profile.rank.position.name }}</div>
+          <div class="line">
+            <strong>Vị trí:</strong> {{ profile.rank.position.name }}
+          </div>
           <div class="line" v-if="checkRole('MANAGER')">
             <strong>Bậc hiện tại:</strong> {{ profile.rank.level }}
           </div>
-          <div class="line">
-            <strong>Dự án hiện tại:</strong> {{ profile.userProjects[0].name }}
+          <div class="line tw-space-x-2">
+            <strong>Dự án hiện tại:</strong>
+            <Select
+              @change="handleSelectProject"
+              v-model="projectSelected"
+              :options="userInfo.userProjects"
+              optionLabel="name"
+              option-value="id"
+              placeholder="Select a Project"
+              class="tw-w-full md:tw-w-40"
+              size="small"
+            />
+            <!-- {{ profile.userProjects[0].name }} -->
           </div>
           <div class="line"><strong>Bộ phận:</strong> {{ departmentName }}</div>
         </div>
       </div>
       <div class="team-mate">
-        <div class="text-start fw-bold">Danh sách thành viên có chung dự án hiện tại:</div>
+        <div class="text-start fw-bold">
+          Danh sách thành viên có chung dự án hiện tại:
+        </div>
         <table class="table">
           <thead class="thead-light">
             <tr>
               <th>#</th>
-              <th @click="sortBy('name')" class="text-start" style="cursor: pointer">Tên</th>
+              <th
+                @click="sortBy('name')"
+                class="text-start"
+                style="cursor: pointer"
+              >
+                Tên
+              </th>
               <th>Vị Trí</th>
               <th>Tác Vụ</th>
             </tr>
@@ -128,26 +154,29 @@
         :is="isViewing ? 'TeamAssessDetailsForm' : 'TeamAssessForm'"
         :selectedPerson="selectedPerson"
         :userInfo="userInfo"
+        :projectSelected="projectSelected"
         @updateSelectedPerson="handleUpdateSelectedPerson"
       />
     </div>
   </div>
 </template>
 <script>
-import TeamAssessDetailsForm from "./TeamAssessDetailsForm.vue";
-import TeamAssessForm from "./TeamAssessForm.vue";
+import TeamAssessDetailsForm from "./components/TeamAssessDetailsForm.vue";
+import TeamAssessForm from "./components/TeamAssessForm.vue";
 import UserService from "@/services/UserService.js";
 import { toast } from "vue3-toastify";
 import AssessService from "@/services/AssessService";
 import ProjectService from "@/services/ProjectService";
 // import AuthService from "@/services/AuthService";
 import defaultImage from "@/assets/avata.png";
+import { Select } from "primevue";
 
 export default {
   name: "TeamMatesAssess",
   components: {
     TeamAssessForm,
     TeamAssessDetailsForm,
+    Select,
   },
   data() {
     return {
@@ -164,6 +193,7 @@ export default {
       assessDetails: [],
       departmentName: "",
       defaultImage: defaultImage,
+      projectSelected: JSON.parse(localStorage.getItem("projectSelected")) || 1,
     };
   },
   mounted() {
@@ -189,6 +219,12 @@ export default {
     },
   },
   methods: {
+    handleSelectProject(e) {
+      localStorage.setItem("projectSelected", e.value);
+      setTimeout(() => {
+        window.location.reload();
+      }, 0);
+    },
     async loadDepartment() {
       const departmentId = localStorage.getItem("userDepartmentId");
       if (!departmentId) {
@@ -205,7 +241,9 @@ export default {
       }
     },
     checkRole(role) {
-      return this.userInfo.userRoles.some((usRole) => usRole.role.name === role);
+      return this.userInfo.userRoles.some(
+        (usRole) => usRole.role.name === role,
+      );
     },
     initializeUserInfo() {
       const user = localStorage.getItem("user");
@@ -227,7 +265,10 @@ export default {
     async fetchTeamMates() {
       try {
         const loggedInUserId = this.userInfo.id;
-        const res = await UserService.fetchTeamsByUserId(loggedInUserId);
+        const res = await UserService.fetchTeamsByUserId(
+          loggedInUserId,
+          this.projectSelected,
+        );
         if (!res) {
           toast.error("Bạn không đang trong dự án nào");
           return;
@@ -235,7 +276,9 @@ export default {
 
         // Bảo toàn các trạng thái cũ
         this.teamMates = res.data.map((person) => {
-          const existingMember = this.teamMates.find((mate) => mate.id === person.id);
+          const existingMember = this.teamMates.find(
+            (mate) => mate.id === person.id,
+          );
 
           return {
             ...person,
@@ -256,7 +299,9 @@ export default {
           // Chờ tất cả các dự án được fetch xong
           const projects = await Promise.all(projectPromises);
           // Lọc ra các dự án hợp lệ và thêm vào userProjects
-          mate.userProjects = projects.filter((project) => project !== undefined);
+          mate.userProjects = projects.filter(
+            (project) => project !== undefined,
+          );
         });
 
         await Promise.all(fetchProjectPromises);
@@ -265,7 +310,9 @@ export default {
         await this.fetchAssessByUser();
 
         // Chọn thành viên đầu tiên chưa nộp
-        const firstUnsubmitted = this.teamMates.find((person) => !person.isSubmitted);
+        const firstUnsubmitted = this.teamMates.find(
+          (person) => !person.isSubmitted,
+        );
 
         if (firstUnsubmitted) {
           firstUnsubmitted.isProcessing = true;
@@ -290,10 +337,14 @@ export default {
       }
     },
     updateAssessmentStatus() {
-      this.assessBy = JSON.parse(localStorage.getItem("assess-by-user" + this.userInfo.id));
+      this.assessBy = JSON.parse(
+        localStorage.getItem("assess-by-user" + this.userInfo.id),
+      );
       if (this.assessBy) {
         this.teamMates.forEach((person) => {
-          const assess = this.assessBy.find((assess) => assess.toUserId === person.id);
+          const assess = this.assessBy.find(
+            (assess) => assess.toUserId === person.id,
+          );
           if (assess) {
             person.isSubmitted = true;
           }
@@ -355,7 +406,10 @@ export default {
         person.isProcessing = !person.isProcessing;
       }
       this.isViewing = false;
-      localStorage.setItem("userDepartmentId", this.selectedPerson.departmentId);
+      localStorage.setItem(
+        "userDepartmentId",
+        this.selectedPerson.departmentId,
+      );
     },
     sortBy(key) {
       if (this.sortKey === key) {
@@ -382,7 +436,11 @@ export default {
 
         if (days < 0) {
           months--;
-          days += new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+          days += new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            0,
+          ).getDate();
         }
 
         if (months < 0) {
@@ -409,7 +467,9 @@ export default {
     handleUpdateSelectedPerson(updatedPerson) {
       this.selectedPerson = null;
       //update selectedPerson vào teamMates
-      const index = this.teamMates.findIndex((person) => person.id === updatedPerson.id);
+      const index = this.teamMates.findIndex(
+        (person) => person.id === updatedPerson.id,
+      );
       if (index !== -1) {
         this.teamMates[index] = updatedPerson;
       }
