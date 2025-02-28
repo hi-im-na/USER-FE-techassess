@@ -1,9 +1,13 @@
 import request from "@/utils/request";
 
 const UserService = {
-  fetchTeamsByUserId: async (userId) => {
+  fetchTeamsByUserId: async (userId, projectId) => {
     try {
-      const response = await request.get(`/api/users/${userId}/same-project`);
+      const response = await request.get(`/api/users/${userId}/same-project`, {
+        params: {
+          projectId,
+        },
+      });
       return response.data;
     } catch (error) {
       console.log(error);
@@ -19,11 +23,15 @@ const UserService = {
   async uploadAvatar(user, formData) {
     try {
       // Gọi API PUT để upload avatar, sử dụng formData
-      const response = await request.put(`/api/users/updateUserWithAvatar/${user.id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data", // Đảm bảo gửi đúng Content-Type
+      const response = await request.put(
+        `/api/users/updateUserWithAvatar/${user.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Đảm bảo gửi đúng Content-Type
+          },
         },
-      });
+      );
       return response.data;
     } catch (error) {
       console.error(error);
